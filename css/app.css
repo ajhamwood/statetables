@@ -1,0 +1,29 @@
+body {
+  display: grid;
+  grid-gap: 4vh;
+  margin: 3vh 5vw;
+  background: #000;
+  color: #ccc }
+h2 { text-align: center }
+main { justify-self: center }
+form, section { margin-bottom: 3vh }
+button:disabled { color: #bbb }
+#table-spec {
+  --curWidth: 1;
+  margin-bottom: 1vh }
+#table-result { --curWidth: 2 }
+#table-spec, #table-result {
+  display: grid;
+  grid-template-columns: repeat(calc(var(--curWidth) + var(--expInputs) + var(--outputs)), minmax(2em, 6em)) }
+[class$=-head], .next-label, .output-label { justify-self: center }
+.cur-head {
+  grid-row: 1 / calc(4 - var(--curWidth));
+  grid-column: span var(--curWidth) }
+.next-head { grid-column: span var(--expInputs) }
+.outputs-head { grid-column: span var(--outputs) }
+#table-spec > .current-label {
+  justify-self: right;
+  padding-right: .5em }
+#table-result > div { justify-self: center }
+input:invalid { border-color: red }
+#table-encoding { margin-bottom: 1vh }
