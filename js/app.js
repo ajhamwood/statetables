@@ -39,19 +39,19 @@ $.targets({
     },
 
     createTableHeadings(targetSel) {
-      const [ flipflopSel, inputSel, outputSel ] = $.all("#create-grid > select");
+      const [ , inputs, outputs ] = $.all("#create-grid > select").map(el => parseInt(el.value));
       $(targetSel).replaceChildren();
       $.load("table-headings", targetSel);
-      if (outputSel.value == 0) $(".outputs-head").remove();
+      if (outputs === 0) $(".outputs-head").remove();
       if (/result$/.test(targetSel)) $.load("encoding-cur-head", targetSel);
 
-      for (let n = 2 ** parseInt(inputSel.value) - 1; n >= 0; n--) {
+      for (let n = 2 ** inputs - 1; n >= 0; n--) {
         let phstr = "";
-        for (let nv = parseInt(inputSel.value) - 1; nv >= 0; nv--)
+        for (let nv = inputs - 1; nv >= 0; nv--)
           phstr += this.inputChar + (n & 1 << nv ? "\u0305" : "") + String.fromCodePoint(0x2080 + nv);
         $.load("next-label", targetSel)[0][0].innerText = phstr;
       }
-      for (let o = parseInt(outputSel.value) - 1; o >= 0; o--)
+      for (let o = outputs - 1; o >= 0; o--)
         $.load("output-label", targetSel)[0][0].innerText = this.outputChar + String.fromCodePoint(0x2080 + o);
     },
 
@@ -64,6 +64,7 @@ $.targets({
             toBin = num => num.toString(2).padStart(flipflops, "0"),
             nextStates = $.all(".next-field").map(el => parseInt(el.value)),
             outputValues = $.all(".output-field").map(el => parseInt(el.value));
+
       $.all("#table-result > .current-label").forEach((el, i) => el.innerText = "S" + invertPerm[i]);
       $.all(".next-cell").forEach((el, i) =>
         el.innerText = toBin(perm[
@@ -101,13 +102,13 @@ $.queries({
   "#gen-table": {
     click () {
       app.emit("createTableHeadings", "#table-spec")
-      const [ flipflopSel, inputSel, outputSel ] = $.all("#create-grid > select");
+      const [ flipflops, inputs, outputs ] = $.all("#create-grid > select").map(el => parseInt(el.value));
 
-      for (let s = 0; s < 2 ** parseInt(flipflopSel.value); s++) {
+      for (let s = 0; s < 2 ** flipflops; s++) {
         $.load("current-label", "#table-spec")[0][0].innerText = "S" + s;
-        for (let i = 2 ** parseInt(inputSel.value) - 1; i >= 0; i--)
-          $.load("next-field", "#table-spec")[0][0].max = 2 ** parseInt(flipflopSel.value) - 1;
-        for (let z = parseInt(outputSel.value) - 1; z >= 0; z--)
+        for (let i = 2 ** inputs - 1; i >= 0; i--)
+          $.load("next-field", "#table-spec")[0][0].max = 2 ** flipflops - 1;
+        for (let z = outputs - 1; z >= 0; z--)
           $.load("output-field", "#table-spec")
       }
 
@@ -120,12 +121,12 @@ $.queries({
       $("#gen-encodings").removeAttribute("disabled");
 
       // Make all encodings available
-      comb(Array(2 ** parseInt(flipflopSel.value) - 1).fill(0).map((_, i) => i + 1)).forEach(ar => {
+      comb(Array(2 ** flipflops - 1).fill(0).map((_, i) => i + 1)).forEach(ar => {
         const encOpt = $.load("encoding-option", "#table-encoding")[0][0];
         encOpt.value = ar;
         encOpt.innerText = ar.reduce(
-          (acc, n, i) => `${acc}, S${i + 1}=${n.toString(2).padStart(flipflopSel.value, "0")}`,
-          "S0=" + ("0".repeat(parseInt(flipflopSel.value)) || "Ø"));
+          (acc, n, i) => `${acc}, S${i + 1}=${n.toString(2).padStart(flipflops, "0")}`,
+          "S0=" + ("0".repeat(flipflops) || "Ø"));
       });
       app.encoding = $("#table-encoding").value.split(",").filter(Boolean).map(s => parseInt(s));
     }
@@ -136,15 +137,14 @@ $.queries({
     click () {
       if (!Array.from(this.closest("form")).every(field => field.validity.valid)) return;
       app.emit("createTableHeadings", "#table-result");
-      const [ flipflopSel, inputSel, outputSel ] = $.all("#create-grid > select");
-      for (let s = 0; s < 2 ** parseInt(flipflopSel.value); s++) {
-        $.load("current-label", "#table-result")[0][0].innerText =
-          "S" + (app.encoding.findIndex(x => x == 1) + 1);
+      const [ flipflops, inputs, outputs ] = $.all("#create-grid > select").map(el => parseInt(el.value));
+      for (let s = 0; s < 2 ** flipflops; s++) {
+        $.load("current-label", "#table-result")[0][0];
         $.load("current-cell", "#table-result")[0][0].innerText =
-          s.toString(2).padStart(flipflopSel.value, "0");
-        for (let i = 2 ** parseInt(inputSel.value) - 1; i >= 0; i--)
+          s.toString(2).padStart(flipflops, "0");
+        for (let i = 2 ** inputs - 1; i >= 0; i--)
           $.load("next-cell", "#table-result");
-        for (let z = parseInt(outputSel.value) - 1; z >= 0; z--)
+        for (let z = outputs - 1; z >= 0; z--)
           $.load("output-cell", "#table-result")
       }
       app.emit("calculateEncoding")
