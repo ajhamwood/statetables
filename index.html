@@ -30,7 +30,7 @@
       <select id="table-encoding">
         <option selected disabled>Select encoding</option>
       </select>
-      <div id="table-result"></div>
+      <div id="table-result" class="byinputs"></div>
     </section>
   </main>
   <template id="num-option"><option></option></template>
@@ -39,7 +39,8 @@
     <div class="next-head">Next state</div>
     <div class="outputs-head">Outputs</div>
   </template>
-  <template id="next-label"><div class="next-label"></div></template>
+  <template id="next-label-byinputs"><div class="next-label byinputs"></div></template>
+  <template id="next-label-byffinputs"><div class="next-label byffinputs"></div></template>
   <template id="output-label"><div class="output-label"></div></template>
   <template id="current-label"><div class="current-label"></div></template>
   <template id="next-field"><input class="next-field" type="number" size="4" min="0" step="1" value="0"></template>
@@ -49,8 +50,15 @@
     <div class="label-head">Label</div>
     <div class="encoding-head">Enc.</div>
   </template>
+  <template id="enc-view-choice">
+    <form class="choice">
+      (<input type="radio" name="enc-view" checked><label></label
+      ><input type="radio" name="enc-view"><label></label>)
+    </form>
+  </template>
   <template id="current-cell"><div class="current-cell"></div></template>
-  <template id="next-cell"><div class="next-cell"></div></template>
+  <template id="next-cell-byinputs"><div class="next-cell byinputs"></div></template>
+  <template id="next-cell-byffinputs"><div class="next-cell byffinputs"></div></template>
   <template id="output-cell"><div class="output-cell"></div></template>
   <script src="js/machine.js"></script>
   <script src="js/app.js"></script>

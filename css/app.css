@@ -6,24 +6,47 @@ body {
   color: #ccc }
 h2 { text-align: center }
 main { justify-self: center }
-form, section { margin-bottom: 3vh }
+form:not(.choice), section { margin-bottom: 3vh }
 button:disabled { color: #bbb }
 #table-spec {
   --curWidth: 1;
   margin-bottom: 1vh }
-#table-result { --curWidth: 2 }
+#table-result {
+  --curWidth: 2;
+  grid-template-rows: minmax(1.5em, max-content) }
 #table-spec, #table-result {
   display: grid;
-  grid-template-columns: repeat(calc(var(--curWidth) + var(--expInputs) + var(--outputs)), minmax(2em, 6em)) }
+  grid-template-columns: repeat(calc(var(--curWidth) + var(--expInputs) + var(--outputs)), minmax(4em, 8em)) }
+#table-result.byffinputs {
+  grid-template-columns: repeat(calc(var(--curWidth) + var(--flipflops) + var(--outputs)), minmax(4em, 8em)) }
 [class$=-head], .next-label, .output-label { justify-self: center }
 .cur-head {
   grid-row: 1 / calc(4 - var(--curWidth));
   grid-column: span var(--curWidth) }
 .next-head { grid-column: span var(--expInputs) }
+#table-result.byffinputs .next-head { grid-column: span var(--flipflops) }
 .outputs-head { grid-column: span var(--outputs) }
 #table-spec > .current-label {
   justify-self: right;
   padding-right: .5em }
-#table-result > div { justify-self: center }
+#table-result > div {
+  text-align: center;
+  justify-self: center }
+#table-result.byinputs .byffinputs,
+#table-result.byffinputs .byinputs { display: none }
 input:invalid { border-color: red }
 #table-encoding { margin-bottom: 1vh }
+.choice {
+  display: inline-block;
+  width: max-content }
+.choice > input[type='radio'] { display: none }
+.choice > input[type='radio'] + label {
+  white-space: pre-wrap;
+  padding: .1em .2em;
+  cursor: pointer }
+.choice > input[type='radio']:not(:checked) + label:hover {
+  background-color: #ff6700;
+  color: #000 }
+.choice > input[type='radio']:checked + label {
+  background-color: #eee;
+  color: #000 }
