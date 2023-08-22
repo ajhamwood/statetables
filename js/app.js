@@ -40,6 +40,7 @@ $.targets({
     },
 
     createDisplayBy (str, fistr) {
+      $("#table-result > .next-head").innerText += " ";
       const choice = $.load("enc-view-choice", "#table-result > .next-head")[0][0];
       $.all("input", choice).forEach((el, i) => el.id = `choose-displayby-${i ? "ff" : ""}inputs`);
       $.all("label", choice).forEach((el, i) => {
@@ -76,7 +77,6 @@ $.targets({
           fostr += this.flipflopOutputChar + sub;
         }
         encHead.innerText += ` (${fostr})`;
-        nextHead.innerText += " ";
         if (inputs === 0) nextHead.innerText += ` (${fistr})`;
         else if (inputs === 1) {
           const sub = String.fromCodePoint(0x2080);
@@ -110,15 +110,14 @@ $.targets({
             [ flipflops, inputs, outputs ] = $.all("#create-grid > select").map(el => parseInt(el.value)),
             toBin = num => num.toString(2).padStart(flipflops, "0"),
             nextStates = $.all(".next-field").map(el => parseInt(el.value)),
-            outputValues = $.all(".output-field").map(el => parseInt(el.value)),
             truthTableByInput = nextStates.map((_, i) => toBin(perm[
               nextStates[2 ** inputs * invertPerm[Math.floor(i / (2 ** inputs))] + i % (2 ** inputs)]
             ])),
-            iota = Array(flipflops).fill(0).map((_, i) => i);
-      let truthTableByFFInput = [];
+            iota = Array(flipflops).fill(0).map((_, i) => i),
+            truthTableByFFInput = [];
       for (let i = 0; i < 2 ** flipflops; i++) {
         const row = truthTableByInput.slice(i * 2 ** inputs, (i + 1) * 2 ** inputs);
-        truthTableByFFInput = truthTableByFFInput.concat(iota.map(i => row.reduce((acc, str) => acc + str[i], "")))
+        iota.forEach(i => truthTableByFFInput.push(row.reduce((acc, str) => acc + str[i], "")))
       }
 
       $.all("#table-result > .current-label").forEach((el, i) => el.innerText = "S" + invertPerm[i]);
@@ -126,6 +125,7 @@ $.targets({
         el.innerText = truthTableByInput[i]);
       $.all(".next-cell.byffinputs").forEach((el, i) =>
         el.innerText = truthTableByFFInput[i]);
+      const outputValues = $.all(".output-field").map(el => parseInt(el.value));
       $.all(".output-cell").forEach((el, i) =>
         el.innerText = outputValues[outputs * invertPerm[Math.floor(i / outputs)] + i % outputs])
     }

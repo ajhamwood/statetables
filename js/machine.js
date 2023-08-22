@@ -7,7 +7,7 @@ var $ = (() => { let wm = new WeakMap(), v = Object.values, r = Promise.resolve.
   
   //   $ enhances querySelectorAll
   return Object.assign((sel, node = document) => sel ? node.querySelector(sel) : node, {
-    all (sel, node = document) { return sel ? v(node.querySelectorAll(sel)) : node },
+    all (sel, node = document) { return sel ? v(node.querySelectorAll(sel)) : [node] },
   
   //   $.Machine creates state machines for the page
     Machine: class { constructor (s) { let state = Object.seal(s); wm.set(this, { es: {}, state: Object.seal(s) });
